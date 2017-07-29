@@ -18,7 +18,7 @@ int main(int argc, char **argv) // ./album  jpg/ ,  ./album  ,  ./album 1.jpg
 	struct fb_var_screeninfo vinfo;
 	unsigned char *fbmem = init_lcd(&vinfo);
 
-	linkname head = init_list();
+	linkshow manage = init_list_show(6);
 
 	if(S_ISDIR(fileinfo.st_mode))
 	{
@@ -44,33 +44,34 @@ int main(int argc, char **argv) // ./album  jpg/ ,  ./album  ,  ./album 1.jpg
 			// 现在就是一张jpg/jpeg图片
 			// 将这张图片的相关信息、图像数据插入链表
 			linkname new = new_node(ep->d_name);
-			list_add_node(new, head);
+			list_add_node(new, manage);
 		}
 
+		show_manage(manage);
+		show_name(manage->head);
 		// 准备好触摸屏
 		int ts = open("/dev/input/event0", O_RDONLY);
 		// 使用触摸屏来回浏览这个链表中的图片，形成一个简单相册
 
-		//链表保存是图片名字
-		if(head->list.next == &head->list)
-		{
-			printf("There is no pictrue!\n");
-			exit(0);
-		}
-		linkname node = list_entry(head->list.next, listname, list);
-		show_jpeg(fbmem, &vinfo, node);
+		/*显示第一张图片，如果没有图片退出*/
+		init_show_manage(manage);
+		show_manage(manage);
+		show_jpeg(fbmem, &vinfo, manage);
 		while(1)
 		{
-			node = wait_for_touch(ts, &vinfo, node); 
-			show_jpeg(fbmem, &vinfo, node);
+			wait_for_touch(ts, &vinfo, manage); 
+			show_jpeg(fbmem, &vinfo, manage);
+			printf("num: %d\n", manage->cache_num);
+			printf("max: %d\n", manage->cache_max_num);
 		}
 
 	}
 	// 直接显示一张jpg/jpeg图片
 	else if(S_ISREG(fileinfo.st_mode))
 	{
-		linkname one = new_node(target);
-		show_jpeg(fbmem, &vinfo, one);
+		linkname new = new_node(target);
+		list_add_node(new, manage);
+		show_jpeg(fbmem, &vinfo, manage);
 	}
 	else
 	{

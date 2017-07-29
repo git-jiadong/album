@@ -13,6 +13,7 @@
 #include <linux/fb.h>
 #include <stdbool.h>
 #include "jpeglib.h"
+#include "album.h"
 
 struct image
 {
@@ -21,12 +22,13 @@ struct image
 	int pixel_size;
 };
 
-void write_lcd(unsigned char *FB, struct fb_var_screeninfo *vinfo,
-		unsigned char *bmp_buf, struct image *info);
 
 unsigned char *init_lcd(struct fb_var_screeninfo *pvinfo);
 void read_image_from_file(int fd, unsigned char *jpg_buffer, unsigned long image_size);
 unsigned char *load_jpeg(char *arg, struct image *imageinfo);
+
+void write_lcd(unsigned char *FB, struct fb_var_screeninfo *vinfo,
+		unsigned char *bmp_buf, struct image *info);
 
 #endif
 
