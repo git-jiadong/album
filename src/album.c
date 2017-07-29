@@ -98,14 +98,15 @@ void init_show_manage(linkshow manage)
 void show_jpeg(unsigned char *fbmem, struct fb_var_screeninfo *vinfo, linkshow manage)
 {
 	struct image iminfo;
-	if(manage->pos_show->rgb == NULL)
+	if(manage->cache_max_num == 0)
 	{
-		linkname pos = manage->pos_show;
-		pos->rgb = load_jpeg(pos->name, &iminfo);
-		pos->width = iminfo.width;
-		pos->height = iminfo.height;
-		pos->pixel_size = iminfo.pixel_size;
-
+		manage->pos_show->rgb = load_jpeg(manage->pos_show->name, &iminfo);
+		write_lcd(fbmem, vinfo, manage->pos_show->rgb, &iminfo);
+		free(manage->pos_show->rgb);
+	}
+	else if(manage->pos_show->rgb == NULL)
+	{
+		manage->pos_show->rgb = load_jpeg(manage->pos_show->name, &iminfo);
 		if(manage->cache_num == manage->cache_max_num)
 		{
 			linkname tmp = manage->frist_cache;
@@ -116,13 +117,11 @@ void show_jpeg(unsigned char *fbmem, struct fb_var_screeninfo *vinfo, linkshow m
 		{
 			manage->cache_num++;
 		}
-	}
 
-	iminfo.width = manage->pos_show->width;
-	iminfo.height = manage->pos_show->height;
-	iminfo.pixel_size = manage->pos_show->pixel_size;
-	
-	write_lcd(fbmem, vinfo, manage->pos_show->rgb, &iminfo);
+		write_lcd(fbmem, vinfo, manage->pos_show->rgb, &iminfo);
+	}
+	else
+		write_lcd(fbmem, vinfo, manage->pos_show->rgb, &iminfo);
 }
 
 linkshow init_list_show(int cache_max_num)
