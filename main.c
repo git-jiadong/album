@@ -47,22 +47,17 @@ int main(int argc, char **argv) // ./album  jpg/ ,  ./album  ,  ./album 1.jpg
 			list_add_node(new, manage);
 		}
 
-		show_manage(manage);
-		show_name(manage->head);
 		// 准备好触摸屏
 		int ts = open("/dev/input/event0", O_RDONLY);
 		// 使用触摸屏来回浏览这个链表中的图片，形成一个简单相册
 
 		/*显示第一张图片，如果没有图片退出*/
 		init_show_manage(manage);
-		show_manage(manage);
 		show_jpeg(fbmem, &vinfo, manage);
 		while(1)
 		{
 			wait_for_touch(ts, &vinfo, manage); 
 			show_jpeg(fbmem, &vinfo, manage);
-			printf("num: %d\n", manage->cache_num);
-			printf("max: %d\n", manage->cache_max_num);
 		}
 
 	}
