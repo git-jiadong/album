@@ -82,7 +82,7 @@ void clean_listname(listname *node)
 	node->pixel_size = 0;
 	node->rgb = NULL;
 }
-
+/*初始化管理结构体里面的数据*/
 void init_show_manage(linkshow manage)
 {
 	if(manage->head == NULL)
@@ -98,15 +98,18 @@ void init_show_manage(linkshow manage)
 void show_jpeg(unsigned char *fbmem, struct fb_var_screeninfo *vinfo, linkshow manage)
 {
 	struct image iminfo;
+	/*当最大缓存数为零时，解压图片并显示后释放图片缓存*/
 	if(manage->cache_max_num == 0)
 	{
 		manage->pos_show->rgb = load_jpeg(manage->pos_show->name, &iminfo);
 		write_lcd(fbmem, vinfo, manage->pos_show->rgb, &iminfo);
 		free(manage->pos_show->rgb);
 	}
+	/*当缓存数不为零，切该图片没有缓存时进行解压并显示及缓存*/
 	else if(manage->pos_show->rgb == NULL)
 	{
 		manage->pos_show->rgb = load_jpeg(manage->pos_show->name, &iminfo);
+		/*当缓存满了的时候，释放第一张缓存的图片*/
 		if(manage->cache_num == manage->cache_max_num)
 		{
 			linkname tmp = manage->frist_cache;
@@ -120,10 +123,12 @@ void show_jpeg(unsigned char *fbmem, struct fb_var_screeninfo *vinfo, linkshow m
 
 		write_lcd(fbmem, vinfo, manage->pos_show->rgb, &iminfo);
 	}
+	/*有缓存的图片直接显示*/
 	else
 		write_lcd(fbmem, vinfo, manage->pos_show->rgb, &iminfo);
 }
 
+/*创建一个初始化管理结构体*/
 linkshow init_list_show(int cache_max_num)
 {
 	linkshow manage = malloc(sizeof(listshow));
@@ -138,7 +143,8 @@ linkshow init_list_show(int cache_max_num)
 	
 	return manage;
 }
-
+/******************************
+  调试打印
 void show_manage(linkshow manage)
 {
 	printf("cache_num %d\n", manage->cache_num);
@@ -162,3 +168,4 @@ void show_name(linkname head)
 		printf("%s\n", tmp->name);
 	}
 }
+************************************/

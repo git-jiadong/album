@@ -64,9 +64,15 @@ int main(int argc, char **argv) // ./album  jpg/ ,  ./album  ,  ./album 1.jpg
 	// 直接显示一张jpg/jpeg图片
 	else if(S_ISREG(fileinfo.st_mode))
 	{
-		linkname new = new_node(target);
-		list_add_node(new, manage);
-		show_jpeg(fbmem, &vinfo, manage);
+		if(is_jpeg(target))
+		{
+			linkname new = new_node(target);
+			list_add_node(new, manage);
+			init_show_manage(manage);
+			show_jpeg(fbmem, &vinfo, manage);
+		}
+		else
+			printf("The argument no jpeg\n");
 	}
 	else
 	{
