@@ -1,7 +1,7 @@
 #include "album.h"
 
 
-int main(int argc, char **argv) // ./album  jpg/ ,  ./album  ,  ./album 1.jpg
+int main(int argc, char **argv) 
 {
 	if(argc > 2)
 	{
@@ -17,7 +17,7 @@ int main(int argc, char **argv) // ./album  jpg/ ,  ./album  ,  ./album 1.jpg
 
 	struct fb_var_screeninfo vinfo;
 	unsigned char *fbmem = init_lcd(&vinfo);
-	/*缓存解压图片的参数*/
+	/*设置缓存解压图片的参数*/
 	linkshow manage = init_list_show(0);
 
 	if(S_ISDIR(fileinfo.st_mode))
